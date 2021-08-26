@@ -15,10 +15,17 @@ def get_book_title(book_id):
 
     book_title_and_author = soup.find('h1').text.split('::')
     book_title = f'{book_id}. {book_title_and_author[0].strip()}'
-
+    print(book_title)
     relative_picture_address = soup.find('div', class_='bookimage').find('img')['src']
     url_to_download_image = urljoin('https://tululu.org', relative_picture_address)
     image_name = urlsplit(url_to_download_image)[2].split('/')[-1]
+
+    book_div_tags_content = soup.find_all('div', class_='texts')
+    book_comments = []
+    for book_div_tag_content in book_div_tags_content:
+        book_comments.append(book_div_tag_content.find('span').text)
+    print(book_comments)
+
     return book_title, image_name, url_to_download_image
 
 
@@ -36,8 +43,8 @@ def download_txt(url, filename, folder='books/'):
     response.raise_for_status()
     check_for_redirect(response)
 
-    with open(path_to_book, "w") as file:
-        file.write(response.text)
+    # with open(path_to_book, "w") as file:
+    #     file.write(response.text)
     return path_to_book
 
 
@@ -50,8 +57,8 @@ def download_image(url, filename, folder='images/'):
     response.raise_for_status()
     check_for_redirect(response)
 
-    with open(image_path, "wb") as file:
-        file.write(response.content)
+    # with open(image_path, "wb") as file:
+    #     file.write(response.content)
     return image_path
 
 
