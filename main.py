@@ -20,11 +20,13 @@ def get_book_title(book_id):
     url_to_download_image = urljoin('https://tululu.org', relative_picture_address)
     image_name = urlsplit(url_to_download_image)[2].split('/')[-1]
 
-    book_div_tags_content = soup.find_all('div', class_='texts')
-    book_comments = []
-    for book_div_tag_content in book_div_tags_content:
-        book_comments.append(book_div_tag_content.find('span').text)
-    print(book_comments)
+    book_comments_tag = soup.find_all('div', class_='texts')
+    book_comments = [book_comment_tag.find('span').text
+                     for book_comment_tag in book_comments_tag]
+
+    book_genres_tag = soup.find('span', class_='d_book').find_all('a')
+    book_genres = [book_genre_tag.text for book_genre_tag in book_genres_tag]
+
 
     return book_title, image_name, url_to_download_image
 
