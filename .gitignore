@@ -10,6 +10,7 @@ __pycache__/
 .Python
 build/
 media/
+images/
 books/
 develop-eggs/
 dist/
