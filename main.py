@@ -5,19 +5,25 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlsplit
 
 
-def get_book_title(book_id):
+def get_book_html(book_id):
     url_to_get_title = f"https://tululu.org/b{book_id}/"
     response = requests.get(url_to_get_title)
     response.raise_for_status()
     check_for_redirect(response)
 
-    soup = BeautifulSoup(response.text, 'lxml')
+    return response.text
+
+
+def parse_book_page(html):
+    soup = BeautifulSoup(html, 'lxml')
 
     book_title_and_author = soup.find('h1').text.split('::')
-    book_title = f'{book_id}. {book_title_and_author[0].strip()}'
-    print(book_title)
+    book_title = book_title_and_author[0].strip()
+    # print(book_title)
+
     relative_picture_address = soup.find('div', class_='bookimage').find('img')['src']
-    url_to_download_image = urljoin('https://tululu.org', relative_picture_address)
+    url_to_download_image = urljoin('https://tululu.org',
+                                    relative_picture_address)
     image_name = urlsplit(url_to_download_image)[2].split('/')[-1]
 
     book_comments_tag = soup.find_all('div', class_='texts')
@@ -27,8 +33,15 @@ def get_book_title(book_id):
     book_genres_tag = soup.find('span', class_='d_book').find_all('a')
     book_genres = [book_genre_tag.text for book_genre_tag in book_genres_tag]
 
+    book_page = {
+        'title': book_title,
+        'image_name': image_name,
+        'image_url': url_to_download_image,
+        'book_comments': book_comments,
+        'book_genres': book_genres
+    }
 
-    return book_title, image_name, url_to_download_image
+    return book_page
 
 
 def check_for_redirect(response):
@@ -45,8 +58,8 @@ def download_txt(url, filename, folder='books/'):
     response.raise_for_status()
     check_for_redirect(response)
 
-    # with open(path_to_book, "w") as file:
-    #     file.write(response.text)
+    with open(path_to_book, "w") as file:
+        file.write(response.text)
     return path_to_book
 
 
@@ -59,8 +72,8 @@ def download_image(url, filename, folder='images/'):
     response.raise_for_status()
     check_for_redirect(response)
 
-    # with open(image_path, "wb") as file:
-    #     file.write(response.content)
+    with open(image_path, "wb") as file:
+        file.write(response.content)
     return image_path
 
 
@@ -69,10 +82,11 @@ def main():
     os.makedirs("images", exist_ok=True)
     for book_id in range(1, 11):
         try:
-            book_title, image_name, url_to_download_image = get_book_title(book_id)
+            book_page = parse_book_page(get_book_html(book_id))
             url_to_download_book = f"https://tululu.org/txt.php?id={book_id}"
-            filepath = download_txt(url_to_download_book, book_title)
-            image_path = download_image(url_to_download_image, image_name)
+            book_title_with_id = f"{book_id}. {book_page['title']}"
+            filepath = download_txt(url_to_download_book, book_title_with_id)
+            image_path = download_image(book_page['image_url'], book_page['image_name'])
         except requests.exceptions.HTTPError:
             pass
 
