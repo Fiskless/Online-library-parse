@@ -92,12 +92,16 @@ def download_image(url, filename, folder='images/'):
 
 
 def main():
-    os.makedirs("books", exist_ok=True)
-    os.makedirs("images", exist_ok=True)
     parser = create_parser()
     args = parser.parse_args()
     begin_with = int(args.start_id)
     finish_on = int(args.end_id)
+
+    if begin_with > finish_on:
+        raise ValueError('start_id должен быть больше end_id. Введите другие значения')
+
+    os.makedirs("books", exist_ok=True)
+    os.makedirs("images", exist_ok=True)
 
     for book_id in range(begin_with, finish_on+1):
         try:
