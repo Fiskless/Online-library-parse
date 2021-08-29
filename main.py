@@ -36,9 +36,9 @@ def parse_book_page(html):
     book_title = book_title_and_author[0].strip()
 
     relative_picture_address = soup.find('div', class_='bookimage').find('img')['src']
-    url_to_download_image = urljoin('https://tululu.org',
+    img_url = urljoin('https://tululu.org',
                                     relative_picture_address)
-    image_name = urlsplit(url_to_download_image)[2].split('/')[-1]
+    image_name = urlsplit(img_url)[2].split('/')[-1]
 
     book_comments_tag = soup.find_all('div', class_='texts')
     book_comments = [book_comment_tag.find('span').text
@@ -50,7 +50,7 @@ def parse_book_page(html):
     book_page = {
         'title': book_title,
         'image_name': image_name,
-        'image_url': url_to_download_image,
+        'image_url': img_url,
         'book_comments': book_comments,
         'book_genres': book_genres
     }
