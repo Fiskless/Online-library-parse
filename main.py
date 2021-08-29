@@ -2,7 +2,7 @@ import requests
 import os
 from pathvalidate import sanitize_filename, sanitize_filepath
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit, unquote
 import argparse
 
 
@@ -36,9 +36,8 @@ def parse_book_page(html):
     book_title = book_title_and_author[0].strip()
 
     relative_picture_address = soup.find('div', class_='bookimage').find('img')['src']
-    img_url = urljoin('https://tululu.org',
-                                    relative_picture_address)
-    image_name = urlsplit(img_url)[2].split('/')[-1]
+    img_url = urljoin('https://tululu.org', relative_picture_address)
+    image_name = unquote(urlsplit(img_url)[2].split('/')[-1])
 
     book_comments_tag = soup.find_all('div', class_='texts')
     book_comments = [book_comment_tag.find('span').text
