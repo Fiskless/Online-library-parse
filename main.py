@@ -63,12 +63,12 @@ def check_for_redirect(response):
         raise requests.exceptions.HTTPError
 
 
-def download_txt(url, filename, folder='books/'):
+def download_txt(url, params_book_url, filename, folder='books/'):
     correct_filename = sanitize_filename(filename)
     correct_folder = sanitize_filepath(folder)
     path_to_book = os.path.join(correct_folder, f'{correct_filename}.txt')
 
-    response = requests.get(url)
+    response = requests.get(url, params=params_book_url)
     response.raise_for_status()
     check_for_redirect(response)
 
@@ -106,9 +106,10 @@ def main():
     for book_id in range(begin_with, finish_on+1):
         try:
             book_page = parse_book_page(get_book_html(book_id))
-            url_to_download_book = f"https://tululu.org/txt.php?id={book_id}"
+            url_to_download_book = f"https://tululu.org/txt.php"
+            payload = {'id': book_id}
             book_title_with_id = f"{book_id}. {book_page['title']}"
-            filepath = download_txt(url_to_download_book, book_title_with_id)
+            filepath = download_txt(url_to_download_book, payload, book_title_with_id)
             image_path = download_image(book_page['image_url'], book_page['image_name'])
         except requests.exceptions.HTTPError:
             pass
