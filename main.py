@@ -7,7 +7,7 @@ import argparse
 
 
 def get_book_html(book_id):
-    url_to_get_title = f'https://tululu.org/b{book_id}/'
+    url_to_get_title = f"https://tululu.org/b{book_id}/"
     response = requests.get(url_to_get_title)
     response.raise_for_status()
     check_for_redirect(response)
@@ -107,12 +107,11 @@ def main():
             book_page = parse_book_page(get_book_html(book_id))
             url_to_download_book = f"https://tululu.org/txt.php"
             payload = {'id': book_id}
-            book_title_with_id = f"{book_id}. {book_page['title']}"
+            book_title_with_id = f"{book_id}-я книга. {book_page['title']}"
             filepath = download_txt(url_to_download_book, payload, book_title_with_id)
             image_path = download_image(book_page['image_url'], book_page['image_name'])
         except requests.exceptions.HTTPError:
             pass
-
 
 if __name__ == '__main__':
 
