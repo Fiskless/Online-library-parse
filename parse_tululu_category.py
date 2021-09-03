@@ -1,10 +1,11 @@
 import json
+import os
+from urllib.parse import urljoin
 
 import requests
-import os
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-from main import *
+
+from main import parse_book_page, get_book_html, download_txt, download_image
 
 
 def main():
@@ -13,16 +14,18 @@ def main():
 
     book_number = 1
     books = []
-    for page in range(1, 5):
+    for page in range(1, 2):
         try:
             url_to_get_fantastic_genre = f"https://tululu.org/l55/{page}"
             response = requests.get(url_to_get_fantastic_genre)
             response.raise_for_status()
 
             soup = BeautifulSoup(response.text, 'lxml')
-            fantastic_books = soup.find_all('table', class_='d_book')
+            fantastic_books_selector = ".bookimage a"
+            fantastic_books = soup.select(fantastic_books_selector)
+
             for book_number, book in enumerate(fantastic_books, start=book_number):
-                relative_book_url = book.find('a')['href']
+                relative_book_url = book['href']
                 book_id = relative_book_url.split('b')[1].split('/')[0]
                 fantastic_book_url = urljoin('https://tululu.org',
                                              relative_book_url)

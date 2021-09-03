@@ -32,18 +32,22 @@ def create_parser():
 def parse_book_page(html):
     soup = BeautifulSoup(html, 'lxml')
 
-    book_title_and_author = soup.find('h1').text.split('::')
+    title_and_author_selector = "h1"
+    book_title_and_author = soup.select_one(title_and_author_selector).text.split('::')
     book_title = book_title_and_author[0].strip()
 
-    relative_picture_address = soup.find('div', class_='bookimage').find('img')['src']
+    picture_selector = '.bookimage img'
+    relative_picture_address = soup.select_one(picture_selector)['src']
     img_url = urljoin('https://tululu.org', relative_picture_address)
     image_name = unquote(urlsplit(img_url)[2].split('/')[-1])
 
-    book_comments_tag = soup.find_all('div', class_='texts')
-    book_comments = [book_comment_tag.find('span').text
-                     for book_comment_tag in book_comments_tag]
+    comments_selector = '.texts span'
+    book_comments = soup.select(comments_selector)
+    book_comments = [book_comment.text
+                     for book_comment in book_comments]
 
-    book_genres_tag = soup.find('span', class_='d_book').find_all('a')
+    genres_selector = 'span.d_book a'
+    book_genres_tag = soup.select(genres_selector)
     book_genres = [book_genre_tag.text for book_genre_tag in book_genres_tag]
 
     book_page = {
