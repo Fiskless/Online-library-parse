@@ -21,7 +21,7 @@ def create_page_parser():
         '--end_page',
         help='Укажите номер страницы, на которой закончить скачивание книг',
         nargs='?',
-        default=2
+        default=701
     )
     parser.add_argument(
         '--skip_imgs',
@@ -64,28 +64,26 @@ def main():
             'start_page должен быть больше end_page. Введите другие значения')
 
     if dest_folder or not skip_txt:
-        os.makedirs(f'{dest_folder}/books/', exist_ok=True)
+        os.makedirs(f'{dest_folder}books/', exist_ok=True)
     if dest_folder or not skip_imgs:
-        os.makedirs(f'{dest_folder}/images/', exist_ok=True)
+        os.makedirs(f'{dest_folder}images/', exist_ok=True)
     if json_path:
         os.makedirs(json_path, exist_ok=True)
     book_number = 1
     books = []
     for page in range(begin_with, finish_on):
-        try:
-            url_to_get_fantastic_genre = f"https://tululu.org/l55/{page}"
-            response = requests.get(url_to_get_fantastic_genre)
-            response.raise_for_status()
 
-            soup = BeautifulSoup(response.text, 'lxml')
-            fantastic_books_selector = ".bookimage a"
-            fantastic_books = soup.select(fantastic_books_selector)
+        url_to_get_fantastic_genre = f"https://tululu.org/l55/{page}"
+        response = requests.get(url_to_get_fantastic_genre)
+        response.raise_for_status()
 
-            for book_number, book in enumerate(fantastic_books, start=book_number):
+        soup = BeautifulSoup(response.text, 'lxml')
+        fantastic_books_selector = ".bookimage a"
+        fantastic_books = soup.select(fantastic_books_selector)
+        for book_number, book in enumerate(fantastic_books, start=book_number+1):
+            try:
                 relative_book_url = book['href']
                 book_id = relative_book_url.split('b')[1].split('/')[0]
-                fantastic_book_url = urljoin('https://tululu.org',
-                                             relative_book_url)
                 book_page = parse_book_page(get_book_html(book_id))
                 books.append(book_page)
                 url_to_download_book = f"https://tululu.org/txt.php"
@@ -95,18 +93,19 @@ def main():
                     filepath = download_txt(url_to_download_book,
                                             payload,
                                             book_title_with_id,
-                                            f'{dest_folder}/books/'
+                                            f'{dest_folder}books/'
                                          )
                 if not skip_imgs:
                     image_book_numberpath = download_image(
                         book_page['image_url'],
                         book_page['image_name'],
-                        f'{dest_folder}/images/'
+                        f'{dest_folder}images/'
                     )
-        except requests.exceptions.HTTPError:
-            pass
+            except requests.exceptions.HTTPError:
+                pass
+
     if dest_folder:
-        with open(f'{dest_folder}/books.json', 'w') as file:
+        with open(f'{dest_folder}books.json', 'w') as file:
             json.dump(books, file, ensure_ascii=False, indent=4)
     else:
         with open(f'{json_path}/books.json', 'w') as file:
