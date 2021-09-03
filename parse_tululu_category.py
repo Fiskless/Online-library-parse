@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 from urllib.parse import urljoin
@@ -8,13 +9,40 @@ from bs4 import BeautifulSoup
 from main import parse_book_page, get_book_html, download_txt, download_image
 
 
+def create_page_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--start_page',
+        help='Укажите номер страницы, с которой начать скачивание книг',
+        nargs='?',
+        default=1
+    )
+    parser.add_argument(
+        '--end_page',
+        help='Укажите номер страницы, на которой закончить скачивание книг',
+        nargs='?',
+        default=702
+    )
+
+    return parser
+
+
 def main():
+    parser = create_page_parser()
+    args = parser.parse_args()
+    begin_with = int(args.start_page)
+    finish_on = int(args.end_page)
+
+    if begin_with > finish_on:
+        raise ValueError(
+            'start_page должен быть больше end_page. Введите другие значения')
+
     os.makedirs("books", exist_ok=True)
     os.makedirs("images", exist_ok=True)
 
     book_number = 1
     books = []
-    for page in range(1, 2):
+    for page in range(begin_with, finish_on):
         try:
             url_to_get_fantastic_genre = f"https://tululu.org/l55/{page}"
             response = requests.get(url_to_get_fantastic_genre)
@@ -29,6 +57,7 @@ def main():
                 book_id = relative_book_url.split('b')[1].split('/')[0]
                 fantastic_book_url = urljoin('https://tululu.org',
                                              relative_book_url)
+                print(fantastic_book_url)
                 book_page = parse_book_page(get_book_html(book_id))
                 books.append(book_page)
                 url_to_download_book = f"https://tululu.org/txt.php"
