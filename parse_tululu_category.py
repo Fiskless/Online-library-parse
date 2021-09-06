@@ -14,13 +14,15 @@ def create_page_parser():
         '--start_page',
         help='Укажите номер страницы, с которой начать скачивание книг',
         nargs='?',
-        default=1
+        default=1,
+        type=int
     )
     parser.add_argument(
         '--end_page',
         help='Укажите номер страницы, на которой закончить скачивание книг',
         nargs='?',
-        default=701
+        default=701,
+        type=int
     )
     parser.add_argument(
         '--skip_imgs',
@@ -51,26 +53,20 @@ def create_page_parser():
 def main():
     parser = create_page_parser()
     args = parser.parse_args()
-    begin_with = int(args.start_page)
-    finish_on = int(args.end_page)
-    skip_imgs = args.skip_imgs
-    skip_txt = args.skip_txt
-    json_path = args.json_path
-    dest_folder = args.dest_folder
 
-    if begin_with > finish_on:
+    if args.start_page > args.end_page:
         raise ValueError(
             'start_page должен быть больше end_page. Введите другие значения')
 
-    if dest_folder or not skip_txt:
-        os.makedirs(f'{dest_folder}books/', exist_ok=True)
-    if dest_folder or not skip_imgs:
-        os.makedirs(f'{dest_folder}images/', exist_ok=True)
-    if json_path:
-        os.makedirs(json_path, exist_ok=True)
+    if args.dest_folder or not args.skip_txt:
+        os.makedirs(f'{args.dest_folder}books/', exist_ok=True)
+    if args.dest_folder or not args.skip_imgs:
+        os.makedirs(f'{args.dest_folder}images/', exist_ok=True)
+    if args.json_path:
+        os.makedirs(args.json_path, exist_ok=True)
     book_number = 1
     books = []
-    for page in range(begin_with, finish_on):
+    for page in range(args.start_page, args.end_page):
 
         url_to_get_fantastic_genre = f"https://tululu.org/l55/{page}"
         response = requests.get(url_to_get_fantastic_genre)
@@ -89,26 +85,26 @@ def main():
                 url_to_download_book = f"https://tululu.org/txt.php"
                 payload = {'id': book_id}
                 book_title_with_id = f"{book_number}-я книга. {book_page['title']}"
-                if not skip_txt:
+                if not args.skip_txt:
                     filepath = download_txt(url_to_download_book,
                                             payload,
                                             book_title_with_id,
-                                            f'{dest_folder}books/'
+                                            f'{args.dest_folder}books/'
                                          )
-                if not skip_imgs:
+                if not args.skip_imgs:
                     image_book_numberpath = download_image(
                         book_page['image_url'],
                         book_page['image_name'],
-                        f'{dest_folder}images/'
+                        f'{args.dest_folder}images/'
                     )
             except requests.exceptions.HTTPError:
                 pass
 
-    if dest_folder:
-        with open(f'{dest_folder}books.json', 'w') as file:
+    if args.dest_folder:
+        with open(f'{args.dest_folder}books.json', 'w') as file:
             json.dump(books, file, ensure_ascii=False, indent=4)
     else:
-        with open(f'{json_path}/books.json', 'w') as file:
+        with open(f'{args.json_path}/books.json', 'w') as file:
             json.dump(books, file, ensure_ascii=False, indent=4)
 
 

@@ -21,13 +21,15 @@ def create_parser():
         'start_id',
         help='Укажите номер книги, с которой начать скачивание',
         nargs='?',
-        default=1
+        default=1,
+        type=int
     )
     parser.add_argument(
         'end_id',
         help='Укажите номер книги, на которой закончить скачивание',
         nargs='?',
-        default=10
+        default=10,
+        type=int
     )
 
     return parser
@@ -104,10 +106,8 @@ def download_image(url, filename, folder='images/'):
 def main():
     parser = create_parser()
     args = parser.parse_args()
-    begin_with = int(args.start_id)
-    finish_on = int(args.end_id)
 
-    if begin_with > finish_on:
+    if args.start_id > args.end_id:
         raise ValueError(
             'start_id должен быть больше end_id. Введите другие значения'
         )
@@ -115,7 +115,7 @@ def main():
     os.makedirs("books", exist_ok=True)
     os.makedirs("images", exist_ok=True)
 
-    for book_id in range(begin_with, finish_on+1):
+    for book_id in range(args.start_id, args.end_id+1):
         try:
             book_page = parse_book_page(get_book_html(book_id))
             url_to_download_book = f"https://tululu.org/txt.php"
