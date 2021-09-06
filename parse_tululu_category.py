@@ -68,7 +68,6 @@ def main():
     parser = create_page_parser()
     args = parser.parse_args()
 
-
     if args.start_page > args.end_page:
         raise ValueError(
             'start_page должен быть больше end_page. Введите другие значения')
