@@ -17,14 +17,18 @@ def get_book_html(book_id):
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('start_id',
-                        help='Укажите номер книги, с которой начать скачивание',
-                        nargs='?',
-                        default=1)
-    parser.add_argument('end_id',
-                        help='Укажите номер книги, на которой закончить скачивание',
-                        nargs='?',
-                        default=10)
+    parser.add_argument(
+        'start_id',
+        help='Укажите номер книги, с которой начать скачивание',
+        nargs='?',
+        default=1
+    )
+    parser.add_argument(
+        'end_id',
+        help='Укажите номер книги, на которой закончить скачивание',
+        nargs='?',
+        default=10
+    )
 
     return parser
 
@@ -33,7 +37,10 @@ def parse_book_page(html):
     soup = BeautifulSoup(html, 'lxml')
 
     title_and_author_selector = "h1"
-    book_title_and_author = soup.select_one(title_and_author_selector).text.split('::')
+    book_title_and_author = soup\
+        .select_one(title_and_author_selector)\
+        .text\
+        .split('::')
     book_title = book_title_and_author[0].strip()
 
     picture_selector = '.bookimage img'
@@ -101,7 +108,9 @@ def main():
     finish_on = int(args.end_id)
 
     if begin_with > finish_on:
-        raise ValueError('start_id должен быть больше end_id. Введите другие значения')
+        raise ValueError(
+            'start_id должен быть больше end_id. Введите другие значения'
+        )
 
     os.makedirs("books", exist_ok=True)
     os.makedirs("images", exist_ok=True)
@@ -112,8 +121,11 @@ def main():
             url_to_download_book = f"https://tululu.org/txt.php"
             payload = {'id': book_id}
             book_title_with_id = f"{book_id}-я книга. {book_page['title']}"
-            filepath = download_txt(url_to_download_book, payload, book_title_with_id)
-            image_path = download_image(book_page['image_url'], book_page['image_name'])
+            filepath = download_txt(url_to_download_book,
+                                    payload,
+                                    book_title_with_id)
+            image_path = download_image(book_page['image_url'],
+                                        book_page['image_name'])
         except requests.exceptions.HTTPError:
             pass
 

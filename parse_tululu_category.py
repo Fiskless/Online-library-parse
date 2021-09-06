@@ -79,7 +79,8 @@ def main():
         soup = BeautifulSoup(response.text, 'lxml')
         fantastic_books_selector = ".bookimage a"
         fantastic_books = soup.select(fantastic_books_selector)
-        for book_number, book in enumerate(fantastic_books, start=book_number+1):
+        for book_number, book in enumerate(fantastic_books,
+                                           start=book_number+1):
             try:
                 relative_book_url = book['href']
                 book_id = relative_book_url.split('b')[1].split('/')[0]
