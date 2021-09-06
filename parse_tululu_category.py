@@ -76,7 +76,7 @@ def main():
         fantastic_books_selector = ".bookimage a"
         fantastic_books = soup.select(fantastic_books_selector)
         for book_number, book in enumerate(fantastic_books,
-                                           start=book_number+1):
+                                           start=book_number):
             try:
                 relative_book_url = book['href']
                 book_id = relative_book_url.split('b')[1].split('/')[0]
@@ -100,12 +100,9 @@ def main():
             except requests.exceptions.HTTPError:
                 pass
 
-    if args.dest_folder:
-        with open(f'{args.dest_folder}books.json', 'w') as file:
-            json.dump(books, file, ensure_ascii=False, indent=4)
-    else:
-        with open(f'{args.json_path}/books.json', 'w') as file:
-            json.dump(books, file, ensure_ascii=False, indent=4)
+    filename = f'{args.dest_folder}books.json' if args.dest_folder else f'{args.json_path}/books.json'
+    with open(filename, 'w') as file:
+        json.dump(books, file, ensure_ascii=False, indent=4)
 
 
 if __name__ == '__main__':
