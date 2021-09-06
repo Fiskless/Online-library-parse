@@ -10,6 +10,9 @@ from main import parse_book_page, get_book_html, download_txt, download_image
 
 def create_page_parser():
     parser = argparse.ArgumentParser()
+
+    pages_count = get_pages_count("https://tululu.org/l55/")
+
     parser.add_argument(
         '--start_page',
         help='Укажите номер страницы, с которой начать скачивание книг',
@@ -21,7 +24,7 @@ def create_page_parser():
         '--end_page',
         help='Укажите номер страницы, на которой закончить скачивание книг',
         nargs='?',
-        default=701,
+        default=pages_count,
         type=int
     )
     parser.add_argument(
@@ -50,9 +53,21 @@ def create_page_parser():
     return parser
 
 
+def get_pages_count(url):
+    response = requests.get(url)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, 'lxml')
+    page_selector = ".npage"
+    pages = soup.select(page_selector)
+    pages_list = [page.text for page in pages]
+    return pages_list[-1]
+
+
 def main():
     parser = create_page_parser()
     args = parser.parse_args()
+
 
     if args.start_page > args.end_page:
         raise ValueError(
