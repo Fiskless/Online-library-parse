@@ -58,10 +58,9 @@ def get_pages_count(url):
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, 'lxml')
-    page_selector = ".npage"
-    pages = soup.select(page_selector)
-    pages_list = [page.text for page in pages]
-    return pages_list[-1]
+    page_selector = ".npage:nth-last-child(1)"
+    pages_count = soup.select_one(page_selector).text
+    return pages_count
 
 
 def main():
