@@ -44,7 +44,7 @@ def parse_book_page(html):
         .text\
         .split('::')
     book_title = book_title_and_author[0].strip()
-
+    book_author = book_title_and_author[1].strip()
     picture_selector = '.bookimage img'
     relative_picture_address = soup.select_one(picture_selector)['src']
     img_url = urljoin('https://tululu.org', relative_picture_address)
@@ -61,6 +61,7 @@ def parse_book_page(html):
 
     book_page = {
         'title': book_title,
+        'author': book_author,
         'image_name': image_name,
         'image_url': img_url,
         'book_comments': book_comments,
