@@ -99,11 +99,12 @@ def main():
                 payload = {'id': book_id}
                 book_title_with_id = f"{book_number}-я книга. {book_page['title']}"
                 if not args.skip_txt:
-                    filepath = download_txt(url_to_download_book,
+                    correct_book_title, filepath = download_txt(url_to_download_book,
                                             payload,
                                             book_title_with_id,
                                             f'{args.dest_folder}books/'
                                          )
+                    book_page['title'] = correct_book_title
                 if not args.skip_imgs:
                     image_book_numberpath = download_image(
                         book_page['image_url'],

@@ -87,7 +87,7 @@ def download_txt(url, params_book_url, filename, folder='books/'):
 
     with open(path_to_book, "w") as file:
         file.write(response.text)
-    return path_to_book
+    return correct_filename, path_to_book
 
 
 def download_image(url, filename, folder='images/'):
@@ -122,7 +122,7 @@ def main():
             url_to_download_book = f"https://tululu.org/txt.php"
             payload = {'id': book_id}
             book_title_with_id = f"{book_id}-я книга. {book_page['title']}"
-            filepath = download_txt(url_to_download_book,
+            correct_book_title, filepath = download_txt(url_to_download_book,
                                     payload,
                                     book_title_with_id)
             image_path = download_image(book_page['image_url'],
