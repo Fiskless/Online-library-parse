@@ -11,6 +11,7 @@ __pycache__/
 build/
 media/
 images/
+pages/
 books/
 develop-eggs/
 dist/
@@ -143,3 +144,4 @@ cython_debug/
 .idea
 books.json
 index.html
+pages/
