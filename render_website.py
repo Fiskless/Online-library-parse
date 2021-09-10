@@ -1,4 +1,5 @@
 import json
+import math
 import os
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -17,12 +18,15 @@ def on_reload():
         books_json = file.read()
 
     books = json.loads(books_json)
-
-    books_with_pages = list(chunked(books, 10))
+    books_on_page = 10
+    pages_count = math.ceil(len(books)/books_on_page)
+    books_with_pages = list(chunked(books, books_on_page))
     for page_number, page_books in enumerate(books_with_pages, start=1):
         books_in_two_columns = list(chunked(page_books, 2))
         rendered_page = template.render(
             books_in_two_columns=books_in_two_columns,
+            current_page=page_number,
+            pages_count=pages_count,
         )
 
         with open(f'pages/index{page_number}.html', 'w', encoding="utf8") as file:
@@ -42,3 +46,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    range(1, 5)
