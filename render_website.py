@@ -1,3 +1,4 @@
+import argparse
 import json
 import math
 import os
@@ -7,7 +8,20 @@ from livereload import Server
 from more_itertools import chunked
 
 
-def on_reload():
+def create_page_parser():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        'page_books_count',
+        help='Укажите, сколько книг вы хотите видеть на одной странице',
+        nargs='?',
+        default=10,
+        type=int
+    )
+    return parser
+
+
+def on_reload(books_on_page):
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
@@ -18,7 +32,6 @@ def on_reload():
         books_json = file.read()
 
     books = json.loads(books_json)
-    books_on_page = 10
     pages_count = math.ceil(len(books)/books_on_page)
     books_with_pages = list(chunked(books, books_on_page))
     for page_number, page_books in enumerate(books_with_pages, start=1):
@@ -36,14 +49,15 @@ def on_reload():
 def main():
     os.makedirs("pages", exist_ok=True)
 
-    on_reload()
+    parser = create_page_parser()
+    args = parser.parse_args()
+
+    on_reload(args.page_books_count)
 
     server = Server()
     server.watch('template.html', on_reload)
 
     server.serve(root='.')
 
-
 if __name__ == '__main__':
     main()
-    range(1, 5)
