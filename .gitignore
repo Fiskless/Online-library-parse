@@ -10,10 +10,6 @@ __pycache__/
 .Python
 build/
 media/
-static/
-images/
-pages/
-books/
 develop-eggs/
 dist/
 downloads/
@@ -143,6 +139,3 @@ dmypy.json
 cython_debug/
 .git
 .idea
-books.json
-index.html
-pages/
