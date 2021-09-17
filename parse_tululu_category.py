@@ -5,7 +5,10 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-from main import parse_book_page, get_book_html, download_txt, download_image
+from main import parse_book_page,\
+                get_book_html, \
+                download_txt, \
+                download_image
 
 
 def create_page_parser():
@@ -93,8 +96,8 @@ def main():
             try:
                 relative_book_url = book['href']
                 book_id = relative_book_url.split('b')[1].split('/')[0]
-                book_page = parse_book_page(get_book_html(book_id))
-                books.append(book_page)
+                book_html = get_book_html(book_id)
+                book_page = parse_book_page(book_html)
                 url_to_download_book = f"https://tululu.org/txt.php"
                 payload = {'id': book_id}
                 book_title_with_id = f"{book_number}-я книга. {book_page['title']}"
@@ -111,9 +114,9 @@ def main():
                         book_page['image_name'],
                         f'{args.dest_folder}images/'
                     )
+                books.append(book_page)
             except requests.exceptions.HTTPError:
                 pass
-
     filename = f'{args.dest_folder}books.json' if args.dest_folder else f'{args.json_path}/books.json'
     with open(filename, 'w') as file:
         json.dump(books, file, ensure_ascii=False, indent=4)
