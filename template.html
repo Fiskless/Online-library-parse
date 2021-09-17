@@ -11,9 +11,14 @@
     <title>Онлайн-библиотека</title>
   </head>
   <body>
+    <style>
+       .margin-top {
+        margin-top: 15px;
+      }
+     </style>
     <div class="container">
       <nav aria-label="Page navigation example">
-        <ul class="pagination">
+        <ul class="pagination margin-top">
           {% if current_page == 1 %}
             <li class="page-item disabled">
               <a class="page-link" tabindex="-1" aria-disabled="true">Назад</a>
