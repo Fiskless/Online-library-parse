@@ -31,10 +31,10 @@
 
 - Скачайте код, для этого нажмите на зеленую кнопку `Code`, далее `Download ZIP`, как показано ниже:
 
-  ![Image alt](https://github.com/Fiskless/Online-library-parse/blob/master/media/how_to_load_library.png)
+  ![Image alt](https://github.com/Fiskless/Online-library-parse/blob/master/screenshots/how_to_load_library.png)
 - В папке pages/ откройте файл index1.html, откроется такое окно:
 
-  ![Image alt](https://github.com/Fiskless/Online-library-parse/blob/master/media/screenshot.png)
+  ![Image alt](https://github.com/Fiskless/Online-library-parse/blob/master/screenshots/screenshot.png)
 - Нажмите кнопку читать в открывшемся окне, откроется новое окно с текстом книги
 - Наслаждайтесь
 
