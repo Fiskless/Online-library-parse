@@ -29,9 +29,8 @@ def on_reload(books_on_page):
     template = env.get_template('template.html')
 
     with open("books.json", "r") as file:
-        books_json = file.read()
+        books = json.load(file)
 
-    books = json.loads(books_json)
     pages_count = math.ceil(len(books)/books_on_page)
     books_with_pages = list(chunked(books, books_on_page))
     for page_number, page_books in enumerate(books_with_pages, start=1):
